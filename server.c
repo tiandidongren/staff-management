@@ -99,6 +99,8 @@ void* pthreadOperate(void *clientFd)
 			break;
 		}
 	}
+
+	send(*fd,msg,sizeof(messageType),0);
 }
 
 //root用户的登录,查询数据库失败,将textType置为LOGINFAIL
