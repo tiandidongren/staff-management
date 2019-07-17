@@ -65,7 +65,7 @@ int sendLoginRequest(const int *fd,messageType* msgType)
 void rootUserInterface(void)
 {
 	printf("**************************************\n");
-	printf("\t1.查询\t2.修改\t3.添加\t4.删除\t5.退出\n");
+	printf("\t1.查询\t2.修改\t3.添加\t4.删除\t5.历史\t6.退出\n");
 	printf("**************************************\n");
 }
 
@@ -103,7 +103,7 @@ void rootOperate(const int *fd,messageType *msgType)
 	case ROOTHISTORY:
 		break;
 	case ROOTLOGOUT:
-		msgType->textType=LOGOUT;
+		//msgType->textType=LOGOUT;
 		sendAndRecvMsg(fd,msgType);
 		break;
 	default:
@@ -133,7 +133,7 @@ void generalOperate(const int *fd,messageType *msgType)
 		generalAlter(fd,msgType);
 		break;
 	case GENERALLOGOUT:
-		msgType->textType=LOGOUT;
+		//msgType->textType=LOGOUT;
 		sendAndRecvMsg(fd,msgType);
 		break;
 	default:
@@ -162,6 +162,8 @@ void rootAlter(const int *fd,messageType *msgType)
 {
 	printf("请输入工号:");
 	scanf("%d",&(msgType->staff_info.workNum));
+	printf("请输入密码:");
+	scanf("%s",msgType->staff_info.password);
 
 	sendAndRecvMsg(fd,msgType);
 	if(OPERATEFAIL==msgType->textType)
@@ -293,7 +295,7 @@ void sendAndRecvMsg(const int *fd,messageType*msgType)
 void printWorkInfo(messageType*msgType)
 {
 	printf("workNum\tname\tpassword\tage\tman\tsalary\n");
-	printf("%d\t%s\t%s\t%d\t%d\t%d\t",msgType->staff_info.workNum,\
+	printf("%d\t%s\t%s\t%d\t%d\t%d\t\n",msgType->staff_info.workNum,\
 			msgType->staff_info.name,msgType->staff_info.password,\
 			msgType->staff_info.age,msgType->staff_info.man,\
 			msgType->staff_info.salary);

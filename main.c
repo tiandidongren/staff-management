@@ -35,15 +35,22 @@ int main(int argc, const char *argv[])
 			{
 				rootUserInterface();
 				rootOperate(&clientFd,news);
+				printf("+++++\n");
 			}
+			printf("=====\n");
 			break;
 		case GENERALLOGIN:
 			while(news->textType!=GENERALLOGOUT)
 			{
 				generalUserInterface();
 				generalOperate(&clientFd,news);
+				printf("+++++\n");
 			}
+			printf("=====\n");
 			break;
+		//case GENERALLOGOUT:
+		//case ROOTLOGOUT:
+			//msgType->textType=LOGOUT;
 		case LOGOUT:
 			break;
 		default:
