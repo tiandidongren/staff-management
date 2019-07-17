@@ -55,15 +55,17 @@ void* pthreadOperate(void *clientFd)
 	}
 	memset(msg,0,sizeof(messageType));
 	printf("messageType,%d\n",sizeof(messageType));
+
+	printf("*fd=%d\n",*fd);
 	
-	int ret=recv(*fd,msg,sizeof(messageType),0);
+	int ret=recv(*fd,(void*)msg,sizeof(messageType),0);
 	if(-1==ret)
 	{
 		perror("recv");
 		return NULL;
 	}
 
-	printf("recv\n");
+	printf("name='%s' and password='%s'\n",msg->staff_info.name,msg->staff_info.password);
 	while(msg->textType!=LOGOUT)
 	{
 		switch(msg->textType)
@@ -97,6 +99,12 @@ void* pthreadOperate(void *clientFd)
 			break;
 		default:
 			break;
+		}
+		int ret=recv(*fd,msg,sizeof(messageType),0);
+		if(-1==ret)
+		{
+			perror("recv");
+			return NULL;
 		}
 	}
 
@@ -201,27 +209,28 @@ bool loginCheck(messageType*msg)
 	int n_row;
 	int n_column;
 
-	sprintf(sql,"select * from staff where name='%s' and password='%s'",msg->staff_info.name,
-			 msg->staff_info.password);
+	sprintf(sql,"select * from staff where name='%s' and password='%s'",msg->staff_info.name,msg->staff_info.password);
+	printf("select * from staff where name='%s' and password='%s'\n",msg->staff_info.name,msg->staff_info.password);
 	if(sqlite3_get_table(db,sql,&rep,&n_row,&n_column,&errmsg)!=SQLITE_OK)
 	{
-		printf("登录失败\n");
+		printf("+++++++登录失败+++++++\n");
 		return false;
 	}
 	else
 	{
 		if(0==n_row)
 		{
+			printf("%s\t%s\t\n",rep[0],rep[1]);
 			printf("登录失败\n");
 			return false;
 		}
 		else
 		{
+		//	printf("%s\t%s\t\n",rep[n_column],rep[n_column+1]);
 			printf("登录成功\n");
 			return true;
 		}
 	}
-
 }
 
 //按照工号查询

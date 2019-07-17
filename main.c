@@ -44,9 +44,9 @@ int main(int argc, const char *argv[])
 			continue;
 		}
 		printf("accept\n");
+		printf("*fd=%d\n",clientFd);
 		pthread_create(&pthreadNum,NULL,pthreadOperate,(void *)&clientFd);
-		printf("pthread_create\n");
-		
+		printf("pthread_create\n");	
 	}
 	return 0;
 }
