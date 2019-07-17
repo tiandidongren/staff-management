@@ -39,6 +39,7 @@ bool createServer(int *fd,const char *ip,const char *port)
 		return false;
 	}
 
+	printf("++++++++++\n");
 	return true;
 }
 
@@ -111,7 +112,7 @@ void rootLogin(int *clientFd,messageType *msg)
 		msg->textType=LOGINFAIL;
 	}
 
-	send(clientFd,msg,sizeof(messageType),0);
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //root用户的查询,失败将textType置为LOGINFAIL
@@ -127,7 +128,7 @@ void rootCheck(int *clientFd,messageType *msg)
 		strcpy(msg->password,"fail");
 		msg->textType=OPERATEFAIL;
 	}
-	send(clientFd,msg,sizeof(messageType),0);
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //root用户的修改,失败将textType置为LOGINFAIL
@@ -163,7 +164,7 @@ void generalLogin(int *clientFd,messageType *msg)
 		msg->textType=LOGINFAIL;
 	}
 
-	send(clientFd,msg,sizeof(messageType),0);
+	send(*clientFd,msg,sizeof(messageType),0);
 
 }
 
@@ -179,7 +180,7 @@ void generalCheck(int *clientFd,messageType *msg)
 		strcpy(msg->password,"fail");
 		msg->textType=OPERATEFAIL;
 	}
-	send(clientFd,msg,sizeof(messageType),0);
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //普通用户的修改,失败将textType置为LOGINFAIL

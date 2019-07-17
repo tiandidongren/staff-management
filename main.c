@@ -35,8 +35,7 @@ int main(int argc, const char *argv[])
 
 	while(1)
 	{
-		clientFd=accept(serverFd,(struct sockaddr*)&clientAdd,
-				&addLength);
+		clientFd=accept(serverFd,(struct sockaddr*)&clientAdd,&addLength);
 		if(-1==clientFd)
 		{
 			perror("accept");
