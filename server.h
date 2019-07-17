@@ -3,7 +3,7 @@
 #include<stdbool.h>
 #include<sqlite3.h>
 #include"public.h"
-#define SQLLENGTH 50
+#define SQLLENGTH 100
 sqlite3 *db;
 
 //创建服务器端,并绑定以及监听,成功返回true
@@ -32,6 +32,13 @@ void generalAlter( int *clientFd,messageType *msg);
 bool loginCheck(messageType*msg);
 //按照工号查询
 bool workNumCheck(messageType*msg);
-
+//修改数据
+bool dataAlterPassword(messageType*msg);
+//添加数据
+bool dataAdd(messageType*msg);
+//按照工号删除数据
+bool dataDelete(messageType*msg);
+//回调函数
+int callback(void *data,int f_num,char **f_value,char **f_name);
 
 #endif

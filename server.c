@@ -65,8 +65,7 @@ void* pthreadOperate(void *clientFd)
 		return NULL;
 	}
 
-	printf("name='%s' and password='%s'\n",msg->staff_info.name,msg->staff_info.password);
-	while(msg->textType!=LOGOUT)
+	while(msg->textType!=ROOTLOGOUT||msg->textType!=GENERALLOGOUT)
 	{
 		switch(msg->textType)
 		{
@@ -146,16 +145,48 @@ void rootCheck(int *clientFd,messageType *msg)
 //root用户的修改,失败将textType置为LOGINFAIL
 void rootAlter(int *clientFd,messageType *msg)
 {
+	//按照工号修改
+	if(dataAlterPassword(msg))
+	{
+		strcpy(msg->password,"ok");
+	}
+	else
+	{
+		strcpy(msg->password,"fail");
+		msg->textType=OPERATEFAIL;
+	}
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //root用户的添加,失败将textType置为LOGINFAIL
 void rootAdd(int *clientFd,messageType *msg)
 {
+	if(dataAdd(msg))
+	{
+		strcpy(msg->password,"ok");
+	}
+	else
+	{
+		strcpy(msg->password,"fail");
+		msg->textType=OPERATEFAIL;
+	}
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //root用户的删除,失败将textType置为LOGINFAIL
 void rootDelete(int *clientFd,messageType *msg)
 {
+	//按照工号删除
+	if(dataDelete(msg))
+	{
+		strcpy(msg->password,"ok");
+	}
+	else
+	{
+		strcpy(msg->password,"fail");
+		msg->textType=OPERATEFAIL;
+	}
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //root用户的历史查询,失败将textType置为LOGINFAIL
@@ -177,7 +208,6 @@ void generalLogin(int *clientFd,messageType *msg)
 	}
 
 	send(*clientFd,msg,sizeof(messageType),0);
-
 }
 
 //普通用户的查询,失败将textType置为LOGINFAIL
@@ -198,6 +228,17 @@ void generalCheck(int *clientFd,messageType *msg)
 //普通用户的修改,失败将textType置为LOGINFAIL
 void generalAlter(int *clientFd,messageType *msg)
 {
+	//按照工号修改
+	if(dataAlterPassword(msg))
+	{
+		strcpy(msg->password,"ok");
+	}
+	else
+	{
+		strcpy(msg->password,"fail");
+		msg->textType=OPERATEFAIL;
+	}
+	send(*clientFd,msg,sizeof(messageType),0);
 }
 
 //登录查询,成功返回true
@@ -209,8 +250,7 @@ bool loginCheck(messageType*msg)
 	int n_row;
 	int n_column;
 
-	sprintf(sql,"select * from staff where name='%s' and password='%s'",msg->staff_info.name,msg->staff_info.password);
-	printf("select * from staff where name='%s' and password='%s'\n",msg->staff_info.name,msg->staff_info.password);
+	sprintf(sql,"select * from staff where name='%s' and password='%s'",msg->userName,msg->password);
 	if(sqlite3_get_table(db,sql,&rep,&n_row,&n_column,&errmsg)!=SQLITE_OK)
 	{
 		printf("+++++++登录失败+++++++\n");
@@ -220,12 +260,12 @@ bool loginCheck(messageType*msg)
 	{
 		if(0==n_row)
 		{
-			printf("%s\t%s\t\n",rep[0],rep[1]);
 			printf("登录失败\n");
 			return false;
 		}
 		else
 		{
+			msg->staff_info.workNum=atoi(rep[0]);
 		//	printf("%s\t%s\t\n",rep[n_column],rep[n_column+1]);
 			printf("登录成功\n");
 			return true;
@@ -267,4 +307,106 @@ bool workNumCheck(messageType*msg)
 		}
 	}
 
+}
+
+//修改数据
+bool dataAlterPassword(messageType*msg)
+{
+	char sql[SQLLENGTH]={0};
+	char *errmsg;
+	char **rep;
+	int n_row;
+	int n_column;
+
+	sprintf(sql,"update staff set password='%s' where workNum=%d"
+			,msg->staff_info.password,msg->staff_info.workNum);
+	if(sqlite3_exec(db,sql,callback,NULL,&errmsg)!=SQLITE_OK)
+	{
+		printf("修改失败\n");
+		return false;
+	}
+	else
+	{
+		if(0==n_row)
+		{
+			printf("修改失败\n");
+			return false;
+		}
+		else
+		{
+			printf("修改成功\n");
+			return true;
+		}
+	}
+}
+
+//添加数据
+bool dataAdd(messageType*msg)
+{
+	char sql[SQLLENGTH]={0};
+	char *errmsg;
+	char **rep;
+	int n_row;
+	int n_column;
+
+	sprintf(sql,"insert into staff values(%d,'%s','%s',%d,%d,%d)",
+			msg->staff_info.workNum,msg->staff_info.name,
+			msg->staff_info.password,msg->staff_info.age,
+			msg->staff_info.man,msg->staff_info.salary);
+	if(sqlite3_exec(db,sql,callback,NULL,&errmsg)!=SQLITE_OK)
+	{
+		printf("添加失败\n");
+		return false;
+	}
+	else
+	{
+		if(0==n_row)
+		{
+			printf("添加失败\n");
+			return false;
+		}
+		else
+		{
+			printf("添加成功\n");
+			return true;
+		}
+	}
+}
+
+//按照工号删除数据
+bool dataDelete(messageType*msg)
+{
+	char sql[SQLLENGTH]={0};
+	char *errmsg;
+	char **rep;
+	int n_row;
+	int n_column;
+
+	sprintf(sql,"delete from staff where workNum=%d"
+			,msg->staff_info.workNum);
+	if(sqlite3_exec(db,sql,callback,NULL,&errmsg)!=SQLITE_OK)
+	{
+		printf("删除失败\n");
+		return false;
+	}
+	else
+	{
+		if(0==n_row)
+		{
+			printf("删除失败\n");
+			return false;
+		}
+		else
+		{
+			printf("删除成功\n");
+			return true;
+		}
+	}
+}
+
+
+//回调函数
+int callback(void *data,int f_num,char **f_value,char **f_name)
+{
+	//空
 }
