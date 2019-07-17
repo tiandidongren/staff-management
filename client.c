@@ -40,7 +40,7 @@ void userLoginInterface(void)
 int sendLoginRequest(const int *fd,messageType* msgType)
 {
 	printf("请输入选项:");
-	scanf("%d",msgType->textType);
+	scanf("%d",&(msgType->textType));
 	switch(msgType->textType)
 	{
 	case ROOTLOGIN:
@@ -81,7 +81,7 @@ void generalUserInterface(void)
 void rootOperate(const int *fd,messageType *msgType)
 {
 	printf("请输入选项:");
-	scanf("%d",msgType->textType);
+	scanf("%d",&(msgType->textType));
 	dealMoreChar();
 	//因为使用一个标志位,所以输入选项应加上登录界面所占的三个数
 	msgType->textType+=LOGOUT;
@@ -118,7 +118,7 @@ void generalOperate(const int *fd,messageType *msgType)
 	printf("你的工号为:%d\n",msgType->staff_info.workNum);
 
 	printf("请输入选项:");
-	scanf("%d",msgType->textType);
+	scanf("%d",&(msgType->textType));
 	dealMoreChar();
 	//因为使用一个标志位,所以输入选项应加上登录界面
 	//以及root用户所占的九个数
@@ -146,7 +146,7 @@ void generalOperate(const int *fd,messageType *msgType)
 void rootCheck(const int *fd,messageType *msgType)
 {
 	printf("请输入工号:");
-	scanf("%d",msgType->staff_info.workNum);
+	scanf("%d",&(msgType->staff_info.workNum));
 	
 	sendAndRecvMsg(fd,msgType);
 	if(OPERATEFAIL==msgType->textType)
@@ -161,7 +161,7 @@ void rootCheck(const int *fd,messageType *msgType)
 void rootAlter(const int *fd,messageType *msgType)
 {
 	printf("请输入工号:");
-	scanf("%d",msgType->staff_info.workNum);
+	scanf("%d",&(msgType->staff_info.workNum));
 
 	sendAndRecvMsg(fd,msgType);
 	if(OPERATEFAIL==msgType->textType)
@@ -177,17 +177,19 @@ void rootAlter(const int *fd,messageType *msgType)
 void rootAdd(const int *fd,messageType *msgType)
 {
 	printf("请输入工号:");
-	scanf("%d",msgType->staff_info.workNum);
+	scanf("%d",&(msgType->staff_info.workNum));
 	printf("请输入姓名:");
 	scanf("%s",msgType->staff_info.name);
 	printf("请输入密码:");
 	scanf("%s",msgType->staff_info.password);
 	printf("请输入年龄:");
-	scanf("%d",msgType->staff_info.age);
+	scanf("%d",&(msgType->staff_info.age));
 	printf("请输入性别:");
-	scanf("%d",msgType->staff_info.man);
+	int man;
+	scanf("%d",&man);
+	msgType->staff_info.man=man;
 	printf("请输入薪水:");
-	scanf("%d",msgType->staff_info.salary);
+	scanf("%d",&(msgType->staff_info.salary));
 
 	sendAndRecvMsg(fd,msgType);
 	if(OPERATEFAIL==msgType->textType)
@@ -203,7 +205,7 @@ void rootAdd(const int *fd,messageType *msgType)
 void rootDelete(const int *fd,messageType *msgType)
 {	
 	printf("请输入工号:");
-	scanf("%d",msgType->staff_info.workNum);
+	scanf("%d",&(msgType->staff_info.workNum));
 
 	sendAndRecvMsg(fd,msgType);
 	if(OPERATEFAIL==msgType->textType)
