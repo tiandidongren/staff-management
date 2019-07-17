@@ -65,7 +65,7 @@ void* pthreadOperate(void *clientFd)
 		return NULL;
 	}
 
-	while(msg->textType!=ROOTLOGOUT||msg->textType!=GENERALLOGOUT)
+	while(1)
 	{
 		switch(msg->textType)
 		{
@@ -96,6 +96,14 @@ void* pthreadOperate(void *clientFd)
 		case GENERALALTER:
  			generalAlter(fd,msg);
 			break;
+		case ROOTLOGOUT:
+		case GENERALLOGOUT:
+			send(*fd,msg,sizeof(messageType),0);
+			break;
+		case LOGOUT:
+			send(*fd,msg,sizeof(messageType),0);
+			pthread_exit(NULL);
+			break;
 		default:
 			break;
 		}
@@ -107,7 +115,6 @@ void* pthreadOperate(void *clientFd)
 		}
 	}
 
-	send(*fd,msg,sizeof(messageType),0);
 }
 
 //root用户的登录,查询数据库失败,将textType置为LOGINFAIL
@@ -265,7 +272,8 @@ bool loginCheck(messageType*msg)
 		}
 		else
 		{
-			msg->staff_info.workNum=atoi(rep[0]);
+			printf("%s\n",rep[n_column]);
+			msg->staff_info.workNum=atoi(rep[n_column]);
 		//	printf("%s\t%s\t\n",rep[n_column],rep[n_column+1]);
 			printf("登录成功\n");
 			return true;
