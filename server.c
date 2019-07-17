@@ -19,13 +19,14 @@ bool createServer(int *fd,const char *ip,const char *port)
 		perror("socket");
 		return false;
 	}
-	struct sockaddr_in serverAdd;
-    serverAdd.sin_family=AF_INET;                                           
-    serverAdd.sin_port=htons(atoi(port));
-    serverAdd.sin_addr.s_addr=inet_addr(ip);
+	struct sockaddr_in *serverAdd=(struct sockaddr_in*)
+		malloc(sizeof(struct sockaddr_in));
+    serverAdd->sin_family=AF_INET;                                           
+    serverAdd->sin_port=htons(atoi(port));
+    serverAdd->sin_addr.s_addr=inet_addr(ip);
  
 	int bindRet;
-	bindRet=bind(*fd, (struct sockaddr *)&serverAdd,
+	bindRet=bind(*fd, (struct sockaddr *)serverAdd,\
 			sizeof(struct sockaddr_in));
 	if(bindRet<0)
 	{
@@ -39,7 +40,6 @@ bool createServer(int *fd,const char *ip,const char *port)
 		return false;
 	}
 
-	printf("++++++++++\n");
 	return true;
 }
 
@@ -54,6 +54,7 @@ void* pthreadOperate(void *clientFd)
 		return NULL;
 	}
 	memset(msg,0,sizeof(messageType));
+	printf("messageType,%d\n",sizeof(messageType));
 	
 	int ret=recv(*fd,msg,sizeof(messageType),0);
 	if(-1==ret)
@@ -62,6 +63,7 @@ void* pthreadOperate(void *clientFd)
 		return NULL;
 	}
 
+	printf("recv\n");
 	while(msg->textType!=LOGOUT)
 	{
 		switch(msg->textType)

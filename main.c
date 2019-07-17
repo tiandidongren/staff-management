@@ -22,15 +22,17 @@ int main(int argc, const char *argv[])
 		printf("%s\n",sqlite3_errmsg(db));
 		return -1;
 	}
+	printf("sqlite3_open\n");
 
 	int serverFd,clientFd;
 	if(!createServer(&serverFd,argv[1],argv[2]))
 	{
 		return -1;
 	}
+	printf("createServer\n");
 
 	struct sockaddr_in clientAdd;
-	socklen_t addLength=sizeof(struct sockaddr_in);
+	int addLength=sizeof(struct sockaddr_in);
 	pthread_t pthreadNum;
 
 	while(1)
@@ -41,7 +43,9 @@ int main(int argc, const char *argv[])
 			perror("accept");
 			continue;
 		}
-		pthread_create(&pthreadNum,NULL,pthreadOperate,(void *)clientFd);
+		printf("accept\n");
+		pthread_create(&pthreadNum,NULL,pthreadOperate,(void *)&clientFd);
+		printf("pthread_create\n");
 		
 	}
 	return 0;
