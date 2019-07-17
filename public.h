@@ -36,7 +36,7 @@ typedef struct staff
 //	char workData[LENGTH];
 //	int userType;
 //	void *released;
-}staff_t
+}staff_t;
 
 typedef struct MSG
 {

@@ -1,9 +1,10 @@
 #include"client.h"
+#include"public.h"
 #include<sys/socket.h>
 #include<sys/types.h>
 
 //创建套接字,并链接服务器,成功返回true
-bool createClient(int *fd,char *ip,char *port)
+bool createClient(int *fd,const char *ip,const char *port)
 {
 	*fd=socket(AF_INET,SOCK_STREAM,0);
 	if(-1==*fd)
@@ -11,13 +12,13 @@ bool createClient(int *fd,char *ip,char *port)
 		printf("create socket is fail!\n");
 		return false;
 	}
-	struct socken_in serverAdd;
+	struct sockaddr_in serverAdd;
 	serverAdd.sin_family=AF_INET;
 	serverAdd.sin_port=htons(atoi(port));
 	serverAdd.sin_addr.s_addr=inet_addr(ip);
 
 	int ret=connect(*fd,(struct sockaddr*)&serverAdd,
-			sizeof(struct socken_in));
+			sizeof(struct sockaddr_in));
 	if(-1==ret)
 	{
 		printf("connect server id fail!\n");
@@ -31,7 +32,7 @@ bool createClient(int *fd,char *ip,char *port)
 void userLoginInterface(void)
 {
 	printf("**************************************\n");
-	printf("\t1.管理员\t2.普通用户\t3.退出\n")
+	printf("\t1.管理员\t2.普通用户\t3.退出\n");
 	printf("**************************************\n");
 }
 
@@ -64,7 +65,7 @@ int sendLoginRequest(const int *fd,messageType* msgType)
 void rootUserInterface(void)
 {
 	printf("**************************************\n");
-	printf("\t1.查询\t2.修改\t3.添加\t4.删除\t5.退出\n")
+	printf("\t1.查询\t2.修改\t3.添加\t4.删除\t5.退出\n");
 	printf("**************************************\n");
 }
 
@@ -72,7 +73,7 @@ void rootUserInterface(void)
 void generalUserInterface(void)
 {
 	printf("**************************************\n");
-	printf("\t1.查询\t2.修改\t3.退出\n")
+	printf("\t1.查询\t2.修改\t3.退出\n");
 	printf("**************************************\n");
 }
 
@@ -290,8 +291,8 @@ void sendAndRecvMsg(const int *fd,messageType*msgType)
 void printWorkInfo(messageType*msgType)
 {
 	printf("workNum\tname\tpassword\tage\tman\tsalary\n");
-	printf("%d\t%s\t%s\t%d\t%d\t%d\t",msgType->staff_info.workNum,
-			msgType->staff_in.name,msgType->staff_in.password,
-			msgType->staff_in.age,msgType->staff_in.man,
-			msgType->staff_in.salary);
+	printf("%d\t%s\t%s\t%d\t%d\t%d\t",msgType->staff_info.workNum,\
+			msgType->staff_info.name,msgType->staff_info.password,\
+			msgType->staff_info.age,msgType->staff_info.man,\
+			msgType->staff_info.salary);
 }

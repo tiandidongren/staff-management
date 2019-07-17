@@ -1,12 +1,20 @@
 #ifndef CLIENT_H_
 #define CLIENT_H_
+#include<stdbool.h>
+#include<string.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/socket.h>
+#include<sys/types.h>
 #include"public.h"
 //创建套接字,并链接服务器,成功返回true
-bool createClient(int *fd,char *ip,char *port);
+bool createClient(int *fd,const char *ip,const char *port);
 //选择超级.普通用户登录或退出
 void userLoginInterface(void);
 //发送登录或者退出的请求,登录成功返回用户类型,登录失败返回0
-int sendLoginRequest(const int *fd,messageType* msgType)
+int sendLoginRequest(const int *fd,messageType* msgType);
 //超级用户的操作界面
 void rootUserInterface(void);
 //普通用户的操作界面
